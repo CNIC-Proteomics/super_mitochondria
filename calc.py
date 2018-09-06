@@ -30,21 +30,8 @@ class calculate:
         else:
             self.method = m
         # ouput config
-        self.out_header = ['Qi','Qj','Rij']
         self.df_corr = pandas.DataFrame()
         
-    def _append_correlation(self, shared_lst, combos):
-        for combo in combos:        
-            # get index
-            qi = combo[0]
-            qj = combo[1]
-            # create the correlation
-            dfi = self.df.loc[qi,:]
-            dfj = self.df.loc[qj,:]
-            corr = dfi.corr(dfj, method=self.method)            
-            # append the list of values into shared list
-            shared_lst.append([qi,qj,corr])
-
     def correlation(self, method=None):
         '''
         Calculate the correlation
@@ -58,9 +45,9 @@ class calculate:
     def create_heatmap(self, graphfile):
         '''
         Create heatmap
-        '''        
+        '''
+        # local var with correlations
         corr = self.df_corr
-
         # Generate a mask for the upper triangle
         mask = np.zeros_like(corr)
         mask[np.triu_indices_from(mask)] = True
@@ -71,7 +58,7 @@ class calculate:
         # Draw the heatmap with the mask and correct aspect ratio
         # sns.heatmap(corr, mask=mask, cmap=cmap, vmin=0, vmax=1, square=True, annot=True, fmt='.4g')
         sns.heatmap(corr, mask=mask, cmap=cmap, vmin=0, vmax=1, linewidths=.1, cbar_kws={"shrink": .5}, square=True, annot=True, fmt='.4g')
-
+        # save to file
         plt.savefig(graphfile, tight_layout=True)
 
     def to_csv(self, outfile):
